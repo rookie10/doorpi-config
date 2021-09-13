@@ -155,7 +155,7 @@ do
                 ;;
 
             "50")
-                Restart			
+                InstallSamba			
                 read -r result < result
                 ;;
 
