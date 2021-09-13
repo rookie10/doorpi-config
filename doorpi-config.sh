@@ -28,7 +28,7 @@ fi
 
 DoorPiInstall(){
     
-    if [ ! -d $DoorpiSetup ]; then
+    if [ -d $DoorpiSetup ]; then
         whiptail --msgbox "Doorpi schon installiert, Installation wird abgebrochen" 16 78       
         return
     fi    
@@ -36,7 +36,7 @@ DoorPiInstall(){
     sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
     sudo apt-get -y install git nano mc python-watchdog
 
-    if [ ! -d $TempDoorpi ]; then
+    if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
         rm -r $TempDoorpi
     fi
