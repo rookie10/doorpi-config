@@ -8,10 +8,11 @@
 ################################
 result=""
 BackupPath="/mnt/backup/"
-TransferPath="/mnt/Transfer/"
+TransferPath="/mnt/transfer/"
 GitTarget="/usr/local/src/DoorpiConfig"
 TempDoorpi="/tmp/DoorPi"
 DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
+newpassword="doorpi"
 
 Debug=0
  
@@ -28,8 +29,8 @@ fi
 
 DoorPiInstall(){
     
-    if [ -d $DoorpiSetup ]; then
-        whiptail --msgbox "Doorpi schon installiert, Installation wird abgebrochen" 16 78       
+    if [ -d $DoorpiSetup ]; then      
+        result="Doorpi schon installiert, Installation wird abgebrochen"
         return
     fi    
 
@@ -64,10 +65,49 @@ DoorPiInstall(){
 
     sudo systemctl enable doorpi.service
     sudo systemctl start doorpi.service
+
+    result="Doorpi Installation erfolgreich abgeschlossen"
+
 }
 
 
+StartDaemon (){
+    
+    sudo systemctl start doorpi.service
+    result="Doorpi daemon gestartet"
+}
 
+StopDaemon (){
+    
+    sudo systemctl stop doorpi.service
+    result="Doorpi daemon gestopt"
+}
+
+InstallSamba (){
+
+    if [ ! -d $BackupPath ]; then
+        mkdir -p $BackupPath
+        chown :www-data -R $BackupPath
+        chmod g+rw -R $BackupPath
+    fi
+
+    if [ ! -d $TransferPath ]; then
+        mkdir -p $TransferPath
+        chown :www-data -R $TransferPath
+        chmod g+rw -R $TransferPath
+    fi
+
+    #Samba 
+    sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install -y samba samba-common smbclient
+    cp -r $locationOfScript"/conf/smb.conf" /etc/samba/
+
+    sudo service smbd restart
+    sudo service nmbd restart
+
+    (echo $newpassword; echo $newpassword) | smbpasswd -a pi -s
+
+    result="Samba wurde installiert"
+}   
 
 while [ 1 ]
 do
@@ -95,14 +135,14 @@ do
 	        ;;
 				
             "20")  
-                Dooraupdate		
+                StartDaemon		
                 read -r result < result
 	        ;;
 				
             "25")  
-                DbSave	
+                StopDaemon	
                 read -r result < result
-	            ;;	
+	        ;;	
 
             "30")  
                 DooraBackup
