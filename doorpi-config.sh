@@ -103,12 +103,7 @@ InstallSamba (){
         chmod g+rw -R $BackupPath
     fi
 
-    if [ ! -d $TransferPath ]; then
-        mkdir -p $TransferPath
-        chown :www-data -R $TransferPath
-        chmod g+rw -R $TransferPath
-    fi
-    
+    ln -s /usr/local/etc/DoorPi/  /mnt/conf
  
     #Samba 
     sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install -y samba samba-common smbclient
