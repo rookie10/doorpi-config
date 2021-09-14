@@ -27,6 +27,15 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+
+if if [ -d $GitTarget ]; then
+
+    sudo apt-get -y install git nano mc
+    sudo git clone https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon
+    sudo ln -s  /usr/local/src/doorpicon/doorpi-config.sh /usr/local/bin/doorpi-config
+    exit 0
+fi
+
 DoorPiInstall(){
     
     if [ -d $DoorpiSetup ]; then      
@@ -117,8 +126,8 @@ do
         "10" "| Doorpi Installation    Neuinstallation Doorpi"   \
         "20" "| Daemon Start           Start des Daemon"  \
         "25" "| Daemon Stop            Beenden des Daemon"  \
-        #"30" "| Backup                 Doorpi Konfig backup" \
-        #"40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
+        "30" "| Backup                 Doorpi Konfig backup" \
+        "40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
         "50" "| Samba                  Installation Samba" 3>&2 2>&1 1>&3	
     )
 
