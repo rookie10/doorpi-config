@@ -57,6 +57,7 @@ DoorPiInstall(){
 
     sudo python get-pip.py
 
+    cd /tmp/DoorPi
     sudo python -m pip install --upgrade pip
     sudo python -m pip install --upgrade setuptools
 
