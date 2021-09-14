@@ -9,7 +9,7 @@
 result=""
 BackupPath="/mnt/backup/"
 TransferPath="/mnt/conf/"
-GitTarget="/usr/local/src/DoorpiConfig"
+GitTarget="/usr/local/src/doorpicon"
 TempDoorpi="/tmp/DoorPi"
 DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
 newpassword="doorpi"
@@ -30,9 +30,11 @@ fi
 
 if [ ! -d $GitTarget ]; then
 
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
     sudo apt-get -y install git nano mc
     sudo git clone https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon
     sudo ln -s  /usr/local/src/doorpicon/doorpi-config.sh /usr/local/bin/doorpi-config
+    rm -r /tmp/doorpicon
     exit 0
 fi
 
@@ -43,8 +45,8 @@ DoorPiInstall(){
         return
     fi    
 
-    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
-    sudo apt-get -y install git nano mc python-watchdog
+    
+    sudo apt-get -y install python-watchdog
 
     if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
