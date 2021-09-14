@@ -30,7 +30,6 @@ fi
 
 if [ ! -d $GitTarget ]; then
 
-    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
     sudo apt-get -y install git nano mc
     sudo git clone https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon
     sudo ln -s  /usr/local/src/doorpicon/doorpi-config.sh /usr/local/bin/doorpi-config
@@ -39,6 +38,8 @@ if [ ! -d $GitTarget ]; then
 fi
 
 DoorPiInstall(){
+
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
     
     if [ -d $DoorpiSetup ]; then      
         result="Doorpi schon installiert, Installation wird abgebrochen"
