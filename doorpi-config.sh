@@ -8,7 +8,7 @@
 ################################
 result=""
 BackupPath="/mnt/backup/"
-TransferPath="/mnt/transfer/"
+TransferPath="/mnt/conf/"
 GitTarget="/usr/local/src/DoorpiConfig"
 TempDoorpi="/tmp/DoorPi"
 DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
@@ -96,7 +96,8 @@ InstallSamba (){
         chown :www-data -R $TransferPath
         chmod g+rw -R $TransferPath
     fi
-
+    
+ 
     #Samba 
     sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install -y samba samba-common smbclient
     cp -r $locationOfScript"/conf/smb.conf" /etc/samba/
@@ -116,8 +117,8 @@ do
         "10" "| Doorpi Installation    Neuinstallation Doorpi"   \
         "20" "| Daemon Start           Start des Daemon"  \
         "25" "| Daemon Stop            Beenden des Daemon"  \
-        "30" "| Backup                 Doorpi Konfig backup" \
-        "40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
+        #"30" "| Backup                 Doorpi Konfig backup" \
+        #"40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
         "50" "| Samba                  Installation Samba" 3>&2 2>&1 1>&3	
     )
 
@@ -145,12 +146,12 @@ do
 	        ;;	
 
             "30")  
-                DooraBackup
+                DoorpiBackup
                 read -r result < result
                 ;;
 
             "40") 
-                DooraRestore
+                DoorpiRestore
                 read -r result < result
                 ;;
 
