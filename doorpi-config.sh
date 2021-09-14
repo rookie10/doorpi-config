@@ -28,7 +28,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 
-if [ -d $GitTarget ]; then
+if [ ! -d $GitTarget ]; then
 
     sudo apt-get -y install git nano mc
     sudo git clone https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon
