@@ -45,9 +45,6 @@ DoorPiInstall(){
         return
     fi    
 
-    
-    sudo apt-get -y install python-watchdog
-
     if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
         rm -r $TempDoorpi
@@ -55,6 +52,8 @@ DoorPiInstall(){
 
     git clone https://github.com/motom001/DoorPi.git -b master $TempDoorpi
     curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py
+
+    sudo apt-get -y install python-watchdog
 
     sudo python get-pip.py
 

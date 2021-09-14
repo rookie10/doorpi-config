@@ -12,10 +12,10 @@ sudo git clone https://github.com/rookie10/doorpi-config.git /tmp/doorpicon
 ```
 doorpi-config verlinken
 ```
-sudo /tmp/doorpicon/doorpi-congig.sh
+sudo /tmp/doorpicon/doorpi-config.sh
 ```
 danach kann das installations Script mit 
 ```
-doorpi-config
+sudo doorpi-config
 ```
 aufgerufen werden
