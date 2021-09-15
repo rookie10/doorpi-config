@@ -1,18 +1,21 @@
 #!/bin/bash
-# 
+###################################### 
+#
 # Doorpi Installations Modul
 #
-#  v0.1   13.9.21
-#  
-#  v0.1 - Installation Doorpi  
-################################
+# 13.9.21  v0.1 - Installation Doorpi
+#    
+######################################
+
 result=""
-BackupPath="/mnt/backup/"
+BackupPath="/mnt/user"
 TransferPath="/mnt/conf/"
 GitTarget="/usr/local/src/doorpicon"
 TempDoorpi="/tmp/DoorPi"
 DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
 newpassword="doorpi"
+doorpiconf="/usr/local/etc/DoorPi"
+
 
 Debug=0
  
@@ -99,7 +102,7 @@ InstallSamba (){
 
     if [ ! -d $BackupPath ]; then
         mkdir -p $BackupPath
-        chown :www-data -R $BackupPath
+        chown :pi -R $BackupPath
         chmod g+rw -R $BackupPath
     fi
 
@@ -116,6 +119,37 @@ InstallSamba (){
 
     result="Samba wurde installiert"
 }   
+
+DoorpiBackup (){
+
+    if [ ! -d $BackupPath ]; then
+        result="Das Backup ist fehlgeschlagen, /mnt/backup Verzeichnis nicht vorhanden"
+        return
+    fi
+
+    doorpiconf1="$doorpiconf/conf"
+    doorpiconf2="$doorpiconf/log"
+    doorpiconf3="$doorpiconf/media"    
+    today=`date +%Y-%m-%d_%H%M%S_`$HOSTNAME"_doorpiconf.tar.gz"
+
+    tar cfvz $BackupPath/$today $doorpiconf1 $doorpiconf2 $doorpiconf3
+    
+    if [ $? == 0 ]; then
+        result="Das Backup <  $today  > wurde erstellt"
+        return
+
+    else
+        result="Das Backup ist fehlgeschlagen"
+        return
+    fi
+}
+
+DoorpiRestore (){
+
+    result="Funktion deaktiviert"
+}
+
+
 
 while [ 1 ]
 do
