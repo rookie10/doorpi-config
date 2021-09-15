@@ -2,19 +2,19 @@
 Automatische Installation von Doorpi
 
 ## Installation
-Als erstesgit auf den Doorpi laden 
+erst mal git installieren 
 ```
 sudo apt-get -y install git
 ```
-dann das git auf den Doorpi laden 
+dann das Installations git clonen 
 ```
 sudo git clone https://github.com/rookie10/doorpi-config.git /tmp/doorpicon
 ```
-doorpi-config verlinken
+instalieren
 ```
 sudo /tmp/doorpicon/doorpi-config.sh
 ```
-danach kann das installations Script mit 
+danach kann das Script mit 
 ```
 sudo doorpi-config
 ```
