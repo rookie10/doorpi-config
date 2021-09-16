@@ -20,14 +20,19 @@ sudo doorpi-config
 ```
 aufgerufen werden
 
+<br>
+
 ## Installscript
-beim starten vom script wird das Auswahlmenü gestartet
+Beim starten des Script wird das Auswahlmenü gestartet
 
 ![grafik](https://user-images.githubusercontent.com/3772602/133646277-407f6e2b-6264-499a-9844-5da2eab88631.png)
 
 ### Doorpi Installation
 Bei start der Installation wird eine komplette Neuinstalltion des Doorpi ausgeführt. Dies ist nur bei einem neuen Image möglich. Wurde bereits eine Installtion ausgeführt wird die Ausführung abgebrochen.
 Nach der Installtion ist doorpi bereits mit einem Daemon gestartet. Bei manuellen Start des doorpi mit ```sudo doorpi_cli --trace```  muss der daemon vorher beendet werden
+
+### Backup
+Die doorpi configuration wird in einem Zipfile auf dem Userdata Laufwerk abgelegt wenn vorher eine Samba Installation erfolgt ist 
 
 ### Samba
 Bei der Installation von Samba werden die Netzlaufwerke <b>Config</b> und <b>Userdata</b> angelegt. Zugriff zu den Laufwerken erhält man mit folgenden Login Daten.
