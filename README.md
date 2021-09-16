@@ -32,7 +32,7 @@ Bei start der Installation wird eine komplette Neuinstalltion des Doorpi ausgef√
 Nach der Installtion ist doorpi bereits mit einem Daemon gestartet. Bei manuellen Start des doorpi mit ```sudo doorpi_cli --trace```  muss der daemon vorher beendet werden
 
 ### Backup
-Die doorpi configuration wird in einem Zipfile auf dem Userdata Laufwerk abgelegt wenn vorher eine Samba Installation erfolgt ist 
+Die doorpi configuration wird in einem Zipfile auf dem Userdata Laufwerk abgelegt, wenn vorher eine Samba Installation erfolgt ist 
 
 ### Samba
 Bei der Installation von Samba werden die Netzlaufwerke <b>Config</b> und <b>Userdata</b> angelegt. Zugriff zu den Laufwerken erh√§lt man mit folgenden Login Daten.
