@@ -12,14 +12,16 @@ BackupPath="/mnt/user"
 TransferPath="/mnt/conf/"
 GitTarget="/usr/local/src/doorpicon"
 TempDoorpi="/tmp/DoorPi"
+TempConfig="/tmp/doorpicon"
 DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
 newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
+gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
 
 
 Debug=0
  
-[ Debug == 1 ] || set -x
+#[ Debug == 1 ] || set -x
 
 locationOfScript=$(dirname "$(readlink -e "$0")")
 ScripName=${0##*/} 
@@ -34,8 +36,8 @@ fi
 if [ ! -d $GitTarget ]; then
 
     sudo apt-get -y install git nano mc
-    sudo git clone https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon
-    sudo ln -s  /usr/local/src/doorpicon/doorpi-config.sh /usr/local/bin/doorpi-config
+    sudo git clone $gitclonehttps
+    sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config
     rm -r /tmp/doorpicon
     exit 0
 fi
@@ -51,7 +53,7 @@ DoorPiInstall(){
 
     if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
-        rm -r $TempDoorpi
+        rm -r $TempConfig
     fi
 
     git clone https://github.com/motom001/DoorPi.git -b master $TempDoorpi
