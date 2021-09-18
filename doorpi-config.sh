@@ -145,8 +145,40 @@ DoorpiBackup (){
 }
 
 DoorpiRestore (){
+    
+    if [ ! -d $BackupPath ]; then
+        result="Das Restore ist fehlgeschlagen, /mnt/backup Verzeichnis nicht vorhanden"
+        return
+    fi
+    
+    fnames=""   
+    bakupadv="$BackupPath/*.tar.gz"
+    # Verzeichnis auf dateien durchsuchen
+    for file in $bakupadv; do
+      fnames+=${file##*/},"",      
+    done
+    echo $fnames
+    # Dateien in Array schreiben 
+    IFS=',' read -r -a array <<< "$fnames"
+    echo ${array[@]}
+    restoreCHOICE=$(
+    whiptail --title "Wähle Doorpi Konfiguration zur Wiederherstellung" --menu "\n Bitte Wiederherstellungs Datei auswählen" 16 78 5 \
+                      "${array[@]}" 3>&2 2>&1 1>&3
+	)
+    
+    if [ $restoreCHOICE != "" ] ; then
+        restorefile=$BackupPath/$restoreCHOICE
+        
+        StopDaemon
+        tar -xvf $restorefile
+        StartDaemon
 
-    result="Funktion deaktiviert"
+        result="Wiederherstellung erfolgreich abgeschlossen !"
+    
+    else
+        result="Wiederherstellung wurde abgebrochen !"
+   
+    fi
 }
 
 
