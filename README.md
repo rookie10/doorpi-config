@@ -35,7 +35,7 @@ Nach der Installtion ist doorpi bereits mit einem Daemon gestartet. Bei manuelle
 Die doorpi configuration wird in einem Zipfile auf dem Userdata Laufwerk abgelegt, wenn vorher eine Samba Installation erfolgt ist 
 
 ### Restore 
-Hier können die Backup Dateien die Ihr erstellt habt wieder zurückgespielt werden.
+Hier können die Backup Dateien die erstellt wurden wieder zurückgespielt werden.
 
 ### Samba
 Bei der Installation von Samba werden die Netzlaufwerke <b>config</b> und <b>userdata</b> angelegt. Zugriff zu den Laufwerken erhält man mit folgenden Login Daten.
