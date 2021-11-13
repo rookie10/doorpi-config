@@ -239,7 +239,7 @@ do
         "25" "| Daemon Stop            Beenden des Daemon"  \
         "30" "| Backup                 Doorpi Konfig backup" \
         "40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
-		"50" "| Restore                Wiederherstellung der Doorpi Konfig"  \
+		"50" "| Config. Update         Git pull wird ausgeführt"  \
         "60" "| Samba                  Installation Samba" 3>&2 2>&1 1>&3	
     )
 
