@@ -54,8 +54,9 @@ DoorPiInstall(){
     fi 		
 	
 	if [ -d $DoorpiSetup ]; then      
-        return result="Doorpi schon installiert, Installation wird abgebrochen"
-    fi 	
+	    result="Doorpi schon installiert, Installation wird abgebrochen" 
+        return 
+	fi 	
 	
 	if [ python2V ]; then 
 	    sudo apt-get -y install python-is-python2 &&
