@@ -17,6 +17,7 @@ DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
 newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
 gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
+python2V=false
 
 
 Debug=0
@@ -25,6 +26,7 @@ Debug=0
 
 locationOfScript=$(dirname "$(readlink -e "$0")")
 ScripName=${0##*/} 
+
 
 # Root Rechte überprüfen
 if [ "$EUID" -ne 0 ]; then
@@ -44,11 +46,33 @@ fi
 
 DoorPiInstall(){
 
-    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
-    
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade || return result="Raspberry OS update fehlgeschlagen"
+	
+	if [ ! "$( python -c 'import sys; print(".".join(map(str, sys.version_info[:1])))')" == "2" ];then
+	    echo "###### python2 muss nachinstalliert werden"
+	    python2V=true
+    fi 		
+	
+	
+	if [ python2V ]; then 
+	    sudo apt-get -y install python-is-python2 &&
+        sudo apt-get -y install python-dev &&
+		true || return result="Installation Python 2.7.18 fehlgeschlagen"
+	fi
+		
+	curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py &&
+	sudo python get-pip.py &&
+    true || return result="Installation get-pip fehlgeschlagen"
+	
+	
+	if [ python2V ]; then
+	    sudo pip install watchdog || return result="Watchdog installation fehlgeschlagen"
+	else
+	    sudo apt-get -y install python-watchdog || return result="Watchdog installation fehlgeschlagen"
+	fi
+	
     if [ -d $DoorpiSetup ]; then      
-        result="Doorpi schon installiert, Installation wird abgebrochen"
-        return
+        return result="Doorpi schon installiert, Installation wird abgebrochen"
     fi    
 
     if [ -d $TempDoorpi ]; then
@@ -56,32 +80,33 @@ DoorPiInstall(){
         rm -r $TempConfig
     fi
 
-    git clone https://github.com/motom001/DoorPi.git -b master $TempDoorpi
-    curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py
+    git clone https://github.com/motom001/DoorPi.git -b master $TempDoorpi || return result="Download Doorpi fehlgeschlagen"
 
-    sudo apt-get -y install python-watchdog
+    cd /tmp/DoorPi &&
+    sudo python -m pip install --upgrade pip &&
+    sudo python -m pip install --upgrade setuptools &&
+	
+	true || return result="Installation pip upgrade fehlgeschlagen"
 
-    sudo python get-pip.py
-
-    cd /tmp/DoorPi
-    sudo python -m pip install --upgrade pip
-    sudo python -m pip install --upgrade setuptools
-
-    sed -i $TempDoorpi/setup.py -e "s/from pip.req import parse_requirements/def parse_requirements(filename):/"
-    sed -i $TempDoorpi/setup.py -e "s/install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'), session=uuid.uuid1())/    \"\"\" load requirements from a pip requirements file \"\"\"/"
-    sed -i $TempDoorpi/setup.py -e "s/reqs = \[str(req.req) for req in install_reqs\]/    lineiter = (line.strip() for line in open(filename))/"
-    sed -i $TempDoorpi/setup.py -e "/lineiter = /a \ \ \ \ return [line for line in lineiter if line and not line.startswith(\"#\")]"
-    sed -i $TempDoorpi/setup.py -e "/line for line /a install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'))"
+    sed -i $TempDoorpi/setup.py -e "s/from pip.req import parse_requirements/def parse_requirements(filename):/" &&
+    sed -i $TempDoorpi/setup.py -e "s/install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'), session=uuid.uuid1())/    \"\"\" load requirements from a pip requirements file \"\"\"/" &&
+    sed -i $TempDoorpi/setup.py -e "s/reqs = \[str(req.req) for req in install_reqs\]/    lineiter = (line.strip() for line in open(filename))/" &&
+    sed -i $TempDoorpi/setup.py -e "/lineiter = /a \ \ \ \ return [line for line in lineiter if line and not line.startswith(\"#\")]" &&
+    sed -i $TempDoorpi/setup.py -e "/line for line /a install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'))" &&
     sed -i $TempDoorpi/setup.py -e "/install_reqs = /a reqs = install_reqs"
+	
+	true || return result="Setup.py Änderung fehlgeschlagen"
 
-    sudo python $TempDoorpi/setup.py install
-    sudo pip install python-daemon==2.2.4
-    sudo pip install linphone4raspberry
+    sudo python $TempDoorpi/setup.py install || return result="Doorpi installation fehlgeschlagen"
+    sudo pip install python-daemon==2.2.4 || return result="Python Daemnon installation fehlgeschlagen"
+    sudo pip install linphone4raspberry || return result="linphone4raspberry installation fehlgeschlagen"
 
-    sudo git clone https://github.com/motom001/DoorPiWeb.git /usr/local/etc/DoorPiWeb
+    sudo git clone https://github.com/motom001/DoorPiWeb.git /usr/local/etc/DoorPiWeb || return result="DoorPiWeb clone fehlgeschlagen"
 
-    sudo systemctl enable doorpi.service
-    sudo systemctl start doorpi.service
+    sudo systemctl enable doorpi.service &&
+    sudo systemctl start doorpi.service &&
+	
+	true || return result="Deamon Aktivierung fehlgeschlagen"
 
     result="Doorpi Installation erfolgreich abgeschlossen"
 
