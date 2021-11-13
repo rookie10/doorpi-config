@@ -46,6 +46,11 @@ fi
 
 DoorPiInstall(){
 
+    if [ -d $DoorpiSetup ]; then      
+	    result="Doorpi schon installiert, Installation wird abgebrochen" 
+		return 
+	fi
+
     sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade || return result="Raspberry OS update fehlgeschlagen"
 	
 	if [ ! "$( python -c 'import sys; print(".".join(map(str, sys.version_info[:1])))')" == "2" ];then
@@ -53,26 +58,26 @@ DoorPiInstall(){
 	    python2V=true
     fi 		
 	
-	if [ -d $DoorpiSetup ]; then      
-	    result="Doorpi schon installiert, Installation wird abgebrochen" 
-        return 
-	fi 	
-	
+
 	if [ python2V ]; then 
 	    sudo apt-get -y install python-is-python2 &&
         sudo apt-get -y install python-dev &&
-		true || return result="Installation Python 2.7.18 fehlgeschlagen"
+		result="Installation Python 2.7.18 fehlgeschlagen" &&
+		true || return 
 	fi
 		
 	curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py &&
 	sudo python get-pip.py &&
-    true || return result="Installation get-pip fehlgeschlagen"
+	result="Installation get-pip fehlgeschlagen" &&
+    true || return 
 	
 	
 	if [ python2V ]; then
-	    sudo pip install watchdog || return result="Watchdog installation fehlgeschlagen"
+	    result="Watchdog installation fehlgeschlagen"
+	    sudo pip install watchdog || return 
 	else
-	    sudo apt-get -y install python-watchdog || return result="Watchdog installation fehlgeschlagen"
+	    result="Watchdog installation fehlgeschlagen"
+	    sudo apt-get -y install python-watchdog || return 
 	fi
 	
     if [ -d $TempDoorpi ]; then
@@ -80,13 +85,15 @@ DoorPiInstall(){
         rm -r $TempConfig
     fi
 
-    git clone https://github.com/motom001/DoorPi.git -b master $TempDoorpi || return result="Download Doorpi fehlgeschlagen"
+    result="Download Doorpi fehlgeschlagen"
+    git clone https://github.com/motom001/DoorPi.git -b master $TempDoorpi || return 
 
     cd /tmp/DoorPi &&
     sudo python -m pip install --upgrade pip &&
     sudo python -m pip install --upgrade setuptools &&
+	result="Installation pip upgrade fehlgeschlagen" &&
 	
-	true || return result="Installation pip upgrade fehlgeschlagen"
+	true || return 
 
     sed -i $TempDoorpi/setup.py -e "s/from pip.req import parse_requirements/def parse_requirements(filename):/" &&
     sed -i $TempDoorpi/setup.py -e "s/install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'), session=uuid.uuid1())/    \"\"\" load requirements from a pip requirements file \"\"\"/" &&
@@ -94,24 +101,37 @@ DoorPiInstall(){
     sed -i $TempDoorpi/setup.py -e "/lineiter = /a \ \ \ \ return [line for line in lineiter if line and not line.startswith(\"#\")]" &&
     sed -i $TempDoorpi/setup.py -e "/line for line /a install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'))" &&
     sed -i $TempDoorpi/setup.py -e "/install_reqs = /a reqs = install_reqs"
+	result="Setup.py Änderung fehlgeschlagen"
 	
-	true || return result="Setup.py Änderung fehlgeschlagen"
+	true || return 
 
-    sudo python $TempDoorpi/setup.py install || return result="Doorpi installation fehlgeschlagen"
-    sudo pip install python-daemon==2.2.4 || return result="Python Daemnon installation fehlgeschlagen"
-    sudo pip install linphone4raspberry || return result="linphone4raspberry installation fehlgeschlagen"
+    result="Doorpi installation fehlgeschlagen"
+    sudo python $TempDoorpi/setup.py install || return 
+	result="Python Daemnon installation fehlgeschlagen"
+    sudo pip install python-daemon==2.2.4 || return 
+	result="linphone4raspberry installation fehlgeschlagen"
+    sudo pip install linphone4raspberry || return 
 
-    sudo git clone https://github.com/motom001/DoorPiWeb.git /usr/local/etc/DoorPiWeb || return result="DoorPiWeb clone fehlgeschlagen"
-
+    result="DoorPiWeb clone fehlgeschlagen" 
+    sudo git clone https://github.com/motom001/DoorPiWeb.git /usr/local/etc/DoorPiWeb || return 
+	
     sudo systemctl enable doorpi.service &&
     sudo systemctl start doorpi.service &&
+	result="Deamon Aktivierung fehlgeschlagen"
 	
-	true || return result="Deamon Aktivierung fehlgeschlagen"
+	true || return 
 
     result="Doorpi Installation erfolgreich abgeschlossen"
 
 }
 
+Doorpigitpull (){
+
+    cd $GitTarget
+	result="Gitpull ist abgebrochen"
+	git pull || return
+	result="Git pull war erfolgreich"
+}	
 
 StartDaemon (){
     
@@ -219,7 +239,8 @@ do
         "25" "| Daemon Stop            Beenden des Daemon"  \
         "30" "| Backup                 Doorpi Konfig backup" \
         "40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
-        "50" "| Samba                  Installation Samba" 3>&2 2>&1 1>&3	
+		"50" "| Restore                Wiederherstellung der Doorpi Konfig"  \
+        "60" "| Samba                  Installation Samba" 3>&2 2>&1 1>&3	
     )
 
 
@@ -255,12 +276,17 @@ do
                 read -r result < result
                 ;;
 
-            "50")
+            "50") 
+                Doorpigitpull
+                read -r result < result
+                ;;
+             
+            "60")
                 InstallSamba			
                 read -r result < result
                 ;;
 
-            "60")
+            "70")
                read -r result < result
             ;;
     esac
