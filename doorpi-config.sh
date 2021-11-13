@@ -53,6 +53,9 @@ DoorPiInstall(){
 	    python2V=true
     fi 		
 	
+	if [ -d $DoorpiSetup ]; then      
+        return result="Doorpi schon installiert, Installation wird abgebrochen"
+    fi 	
 	
 	if [ python2V ]; then 
 	    sudo apt-get -y install python-is-python2 &&
@@ -71,10 +74,6 @@ DoorPiInstall(){
 	    sudo apt-get -y install python-watchdog || return result="Watchdog installation fehlgeschlagen"
 	fi
 	
-    if [ -d $DoorpiSetup ]; then      
-        return result="Doorpi schon installiert, Installation wird abgebrochen"
-    fi    
-
     if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
         rm -r $TempConfig
