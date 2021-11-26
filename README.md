@@ -45,7 +45,7 @@ Passort: doorpi
 ```
 
 #### Doorpi-config
-config dateien des doorpi
+config Dateien des doorpi
 
 #### Doorpi-userdata 
-hier werden die backup dateien abgelegt
+hier werden die Backup Dateien abgelegt

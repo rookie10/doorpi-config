@@ -83,7 +83,7 @@ DoorPiInstall(){
 	
     if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
-        rm -r $TempConfig
+        rm -r $TempDoorpi
     fi
 
     result="Download Doorpi fehlgeschlagen"
@@ -254,7 +254,7 @@ do
 	    
             "10")
                 DoorPiInstall
-		read -r result < result
+		        read -r result < result
 	        ;;
 				
             "20")  
