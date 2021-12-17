@@ -3,7 +3,7 @@
 #
 # Doorpi Installations Modul
 #
-# 13.9.21  v0.2 - Installation Doorpi
+# 13.9.21  v0.2.1 - Installation Doorpi
 #    
 ######################################
 
@@ -18,7 +18,7 @@ newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
 gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
 python2V=false
-version=v0.2
+version=v0.2.1
 
 
 Debug=0
@@ -54,17 +54,18 @@ DoorPiInstall(){
 
     sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade || return result="Raspberry OS update fehlgeschlagen"
 	
+	python2V=""
     if [ ! "$( python -c 'import sys; print(".".join(map(str, sys.version_info[:1])))')" == "2" ];then
         echo "###### python2 muss nachinstalliert werden"
-	python2V=true
+        python2V="true"
     fi 		
 	
 
-    if [ python2V ]; then 
+    if [ $python2V ]; then 
         sudo apt-get -y install python-is-python2 &&
         sudo apt-get -y install python-dev &&
-	result="Installation Python 2.7.18 fehlgeschlagen" &&
-	true || return 
+        result="Installation Python 2.7.18 fehlgeschlagen" &&
+        true || return 
     fi
 		
     curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py &&
@@ -74,7 +75,7 @@ DoorPiInstall(){
     true || return 
 	
 	
-    if [ python2V ]; then
+    if [ $python2V ]; then
         result="Watchdog installation fehlgeschlagen"
         sudo pip install watchdog || return 
     else
