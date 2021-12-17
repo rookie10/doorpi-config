@@ -92,9 +92,9 @@ DoorPiInstall(){
     cd /tmp/DoorPi &&
     sudo python -m pip install --upgrade pip &&
     sudo python -m pip install --upgrade setuptools &&
-	result="Installation pip upgrade fehlgeschlagen" &&
+    result="Installation pip upgrade fehlgeschlagen" &&
 	
-	true || return 
+    true || return 
 
     sed -i $TempDoorpi/setup.py -e "s/from pip.req import parse_requirements/def parse_requirements(filename):/" &&
     sed -i $TempDoorpi/setup.py -e "s/install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'), session=uuid.uuid1())/    \"\"\" load requirements from a pip requirements file \"\"\"/" &&
@@ -102,15 +102,15 @@ DoorPiInstall(){
     sed -i $TempDoorpi/setup.py -e "/lineiter = /a \ \ \ \ return [line for line in lineiter if line and not line.startswith(\"#\")]" &&
     sed -i $TempDoorpi/setup.py -e "/line for line /a install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'))" &&
     sed -i $TempDoorpi/setup.py -e "/install_reqs = /a reqs = install_reqs"
-	result="Setup.py Änderung fehlgeschlagen"
+    result="Setup.py Änderung fehlgeschlagen"
 	
-	true || return 
+    true || return 
 
     result="Doorpi installation fehlgeschlagen"
     sudo python $TempDoorpi/setup.py install || return 
-	result="Python Daemnon installation fehlgeschlagen"
+    result="Python Daemnon installation fehlgeschlagen"
     sudo pip install python-daemon==2.2.4 || return 
-	result="linphone4raspberry installation fehlgeschlagen"
+    result="linphone4raspberry installation fehlgeschlagen"
     sudo pip install linphone4raspberry || return 
 
     result="DoorPiWeb clone fehlgeschlagen" 
@@ -118,9 +118,9 @@ DoorPiInstall(){
 	
     sudo systemctl enable doorpi.service &&
     sudo systemctl start doorpi.service &&
-	result="Deamon Aktivierung fehlgeschlagen"
+    result="Deamon Aktivierung fehlgeschlagen"
 	
-	true || return 
+    true || return 
 
     result="Doorpi Installation erfolgreich abgeschlossen"
 
@@ -129,9 +129,9 @@ DoorPiInstall(){
 Doorpigitpull (){
 
     cd $GitTarget
-	result="Gitpull ist abgebrochen"
-	git pull || return
-	result="Git pull war erfolgreich"
+    result="Gitpull ist abgebrochen"
+    git pull || return
+    result="Git pull war erfolgreich"
 }	
 
 StartDaemon (){
@@ -254,7 +254,7 @@ do
 	    
             "10")
                 DoorPiInstall
-		        read -r result < result
+		read -r result < result
 	        ;;
 				
             "20")  
