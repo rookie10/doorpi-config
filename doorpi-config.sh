@@ -48,38 +48,39 @@ fi
 DoorPiInstall(){
 
     if [ -d $DoorpiSetup ]; then      
-	    result="Doorpi schon installiert, Installation wird abgebrochen" 
-		return 
-	fi
+        result="Doorpi schon installiert, Installation wird abgebrochen" 
+	return 
+    fi
 
     sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade || return result="Raspberry OS update fehlgeschlagen"
 	
-	if [ ! "$( python -c 'import sys; print(".".join(map(str, sys.version_info[:1])))')" == "2" ];then
-	    echo "###### python2 muss nachinstalliert werden"
-	    python2V=true
+    if [ ! "$( python -c 'import sys; print(".".join(map(str, sys.version_info[:1])))')" == "2" ];then
+        echo "###### python2 muss nachinstalliert werden"
+	python2V=true
     fi 		
 	
 
-	if [ python2V ]; then 
-	    sudo apt-get -y install python-is-python2 &&
+    if [ python2V ]; then 
+        sudo apt-get -y install python-is-python2 &&
         sudo apt-get -y install python-dev &&
-		result="Installation Python 2.7.18 fehlgeschlagen" &&
-		true || return 
-	fi
+	result="Installation Python 2.7.18 fehlgeschlagen" &&
+	true || return 
+    fi
 		
-	curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py &&
-	sudo python get-pip.py &&
-	result="Installation get-pip fehlgeschlagen" &&
+    curl https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py &&
+    sudo python get-pip.py &&
+    result="Installation get-pip fehlgeschlagen" &&
+    
     true || return 
 	
 	
-	if [ python2V ]; then
-	    result="Watchdog installation fehlgeschlagen"
-	    sudo pip install watchdog || return 
-	else
-	    result="Watchdog installation fehlgeschlagen"
-	    sudo apt-get -y install python-watchdog || return 
-	fi
+    if [ python2V ]; then
+        result="Watchdog installation fehlgeschlagen"
+        sudo pip install watchdog || return 
+    else
+        result="Watchdog installation fehlgeschlagen"
+        sudo apt-get -y install python-watchdog || return 
+    fi
 	
     if [ -d $TempDoorpi ]; then
         echo "Verzeichnis < $TempDoorpi > schon vorhanden und wird gelöscht"
