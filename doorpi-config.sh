@@ -250,7 +250,8 @@ while [ 1 ]
 do
     CHOICE=$(
         whiptail --title "Willkomen im Doorpi Konfiguration Menu $version" --menu "\n " 16 78 7 \
-        "10" "| Doorpi Installation    Neuinstallation Doorpi"   \
+        "10" "| DoorPi Installation    Neuinstallation Doorpi"   \
+		"15" "| DoorPi3 Installation   Achtung !!! experimental"   \
         "20" "| Daemon Start           Start des Daemon"  \
         "25" "| Daemon Stop            Beenden des Daemon"  \
         "30" "| Backup                 Doorpi Konfig backup" \
@@ -269,7 +270,12 @@ do
 	    
             "10")
                 DoorPiInstall
-		read -r result < result
+				read -r result < result
+	        ;;
+
+			"15")
+                DoorPi3Install
+				read -r result < result
 	        ;;
 				
             "20")  
