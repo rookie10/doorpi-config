@@ -45,7 +45,20 @@ if [ ! -d $GitTarget ]; then
     exit 0
 fi
 
-DoorPiInstall(){
+DoorPi3Install(){
+ 
+	result="DoorPi3 Installation abgebrochen"
+
+    Doorpi3CHOICE=$(
+    whiptail --title "Doorpi3 >>> expermintel <<<< " --yesno "A C H T U N G die Auswahl vov Doorpi3 ist aktuell \n " ·\
+                     "noch im absoluten experimental Status \n \n" \
+                     "Verwendung auf eigene gefahr \n \n" \
+                     "Bitte daten regelmäßig sichern" 16 78 3>&2 2>&1 1>&3
+                    )
+    
+}
+
+DoorPiInstall()n
 
     if [ -d $DoorpiSetup ]; then      
         result="Doorpi schon installiert, Installation wird abgebrochen" 
