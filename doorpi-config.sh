@@ -47,18 +47,28 @@ fi
 
 DoorPi3Install(){
  
-	result="DoorPi3 Installation abgebrochen"
+    result="DoorPi3 Installation abgebrochen"
+    if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
+        echo "wurde abgebrochen" 
+		return 1
+    fi
 
-    Doorpi3CHOICE=$(
-    whiptail --title "Doorpi3 >>> expermintel <<<< " --yesno "A C H T U N G die Auswahl vov Doorpi3 ist aktuell \n " ·\
-                     "noch im absoluten experimental Status \n \n" \
-                     "Verwendung auf eigene gefahr \n \n" \
-                     "Bitte daten regelmäßig sichern" 16 78 3>&2 2>&1 1>&3
-                    )
-    
+    result="Install pip fehlgeschlagen" 
+    sudo apt-get install python3-pip || return
+    result="Git konnte nicht geladen werden"
+    git clone https://github.com/emphasize/DoorPi || return
+    cd DoorPi
+    result="Branch nicht vorhanden"
+    git checkout bugfix/setuptools
+    result="Installation fehlgeschlagen"
+    sudo python3 setup.py install --prefix=/usr/local
+
+    result="Doorpi3 Installation fertiggestellt"
+    return 0
+
 }
 
-DoorPiInstall()n
+DoorPiInstall(){
 
     if [ -d $DoorpiSetup ]; then      
         result="Doorpi schon installiert, Installation wird abgebrochen" 
@@ -249,7 +259,7 @@ DoorpiRestore (){
 while [ 1 ]
 do
     CHOICE=$(
-        whiptail --title "Willkomen im Doorpi Konfiguration Menu $version" --menu "\n " 16 78 7 \
+        whiptail --title "Willkomen im Doorpi Konfiguration Menu $version" --menu "\n " 20 100 12 \
         "10" "| DoorPi Installation    Neuinstallation Doorpi"   \
 		"15" "| DoorPi3 Installation   Achtung !!! experimental"   \
         "20" "| Daemon Start           Start des Daemon"  \
@@ -270,42 +280,34 @@ do
 	    
             "10")
                 DoorPiInstall
-				read -r result < result
 	        ;;
 
 			"15")
                 DoorPi3Install
-				read -r result < result
 	        ;;
 				
             "20")  
                 StartDaemon		
-                read -r result < result
 	        ;;
 				
             "25")  
                 StopDaemon	
-                read -r result < result
 	        ;;	
 
             "30")  
                 DoorpiBackup
-                read -r result < result
                 ;;
 
             "40") 
                 DoorpiRestore
-                read -r result < result
                 ;;
 
             "50") 
                 Doorpigitpull
-                read -r result < result
                 ;;
              
             "60")
                 InstallSamba			
-                read -r result < result
                 ;;
 
             "70")
