@@ -73,6 +73,8 @@ DoorPi3Install(){
                             libavdevice-dev libavfilter-dev libavresample-dev libavutil-dev libavcodec-extra libopus-dev \
                             libopencore-amrwb-dev libopencore-amrnb-dev libvo-amrwbenc-dev || return
 
+    sudo apt-get install -y swig default-jdk || return
+
     if [ -d $SipPath ]; then      
        mkdir -p $SipPath   
     fi
