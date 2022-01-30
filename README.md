@@ -10,16 +10,16 @@ dann das Installations git clonen
 ```
 sudo git clone https://github.com/rookie10/doorpi-config.git /tmp/doorpicon
 ```
-DoorPi 3 branch
-```
-cd /tmp/doorpicon
-git checkout Doorpi3_test
-```
-
 instalieren
 ```
 sudo /tmp/doorpicon/doorpi-config.sh
 ```
+DoorPi 3 branch
+```
+cd /usr/local/src/doorpicon
+sudo git checkout Doorpi3_test
+```
+
 danach kann das Script mit 
 ```
 sudo doorpi-config

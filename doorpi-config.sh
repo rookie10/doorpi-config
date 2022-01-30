@@ -46,6 +46,8 @@ if [ ! -d $GitTarget ]; then
 fi
 
 DoorPi3Install(){
+
+    SipPath="/usr/local/src/sip"
  
     result="DoorPi3 Installation abgebrochen"
     if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
@@ -54,7 +56,7 @@ DoorPi3Install(){
     fi
 
     result="Install pip fehlgeschlagen" 
-    sudo apt-get install python3-pip || return
+    sudo apt-get install -y python3-pip || return
     result="Git konnte nicht geladen werden"
     git clone https://github.com/emphasize/DoorPi || return
     cd DoorPi
@@ -62,6 +64,41 @@ DoorPi3Install(){
     git checkout bugfix/setuptools
     result="Installation fehlgeschlagen"
     sudo python3 setup.py install --prefix=/usr/local
+
+    if [ -d $SipPath ]; then
+        mkdir -p $SipPath     
+    fi
+    cd $SipPath
+
+    wget https://github.com/cisco/openh264/archive/v2.2.0.tar.gz &&
+    tar -xf v2.2.0.tar.gz &&
+    cd $SipPath/openh264-2.2.0 &&
+    make &&
+    sudo make install &&
+    result="Installation openh264 fehlgeschlagen" &&
+    true || return 1
+    
+    cd $SipPath
+    https://github.com/pjsip/pjproject/archive/refs/tags/2.11.1.tar.gz &&
+    tar -xf 2.11.1.tar.gz &&
+    cd $SipPath/pjproject-2.11.1 &&
+
+    echo "#define PJMEDIA_AUDIO_DEV_HAS_ALSA      1" > pjlib/include/pj/config_site.h &&
+    echo "#define PJMEDIA_AUDIO_DEV_HAS_PORTAUDIO 0" >> pjlib/include/pj/config_site.h &&
+    echo "#define PJMEDIA_HAS_VIDEO       1" >> pjlib/include/pj/config_site.h &&
+
+    echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
+    echo "export LDFLGS +=" >> ./user.mak &&
+    result="Vorbereitung  pjsip fehlgeschlagen" &&
+    true || return 1
+
+    
+    ./configure  --enable-shared --disable-libwebrtc &&
+    make dep &&
+    make &&
+    sudo make install &&
+    result="Installation pjsip fehlgeschlagen" &&
+    true || return 1
 
     result="Doorpi3 Installation fertiggestellt"
     return 0
@@ -260,14 +297,14 @@ while [ 1 ]
 do
     CHOICE=$(
         whiptail --title "Willkomen im Doorpi Konfiguration Menu $version" --menu "\n " 20 100 12 \
-        "10" "| DoorPi Installation    Neuinstallation Doorpi"   \
-		"15" "| DoorPi3 Installation   Achtung !!! experimental"   \
-        "20" "| Daemon Start           Start des Daemon"  \
-        "25" "| Daemon Stop            Beenden des Daemon"  \
-        "30" "| Backup                 Doorpi Konfig backup" \
-        "40" "| Restore                Wiederherstellung der Doorpi Konfig"  \
-		"50" "| Config. Update         Git pull wird ausgeführt"  \
-        "60" "| Samba                  Installation Samba" 3>&2 2>&1 1>&3	
+        "10" "| DoorPi Installation      Neuinstallation Doorpi"   \
+		"15" "| DoorPi3 Installation     Achtung !!! experimental"   \
+        "20" "| Daemon Start             Start des Daemon"  \
+        "25" "| Daemon Stop              Beenden des Daemon"  \
+        "30" "| Backup                   Doorpi Konfig backup" \
+        "40" "| Restore                  Wiederherstellung der Doorpi Konfig"  \
+		"50" "| doorpi-config update     Git pull wird ausgeführt"  \
+        "60" "| Samba                    Installation Samba" 3>&2 2>&1 1>&3	
     )
 
 
