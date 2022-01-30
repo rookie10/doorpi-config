@@ -55,18 +55,26 @@ DoorPi3Install(){
 		return 1
     fi
 
+
     result="Install pip fehlgeschlagen" 
     sudo apt-get install -y python3-pip || return
     result="Git konnte nicht geladen werden"
+    cd /tmp
     git clone https://github.com/emphasize/DoorPi || return
     cd DoorPi
     result="Branch nicht vorhanden"
     git checkout bugfix/setuptools
-    result="Installation fehlgeschlagen"
-    sudo python3 setup.py install --prefix=/usr/local
+    result="Installation fehlgeschlagen" || return
+    sudo python3 setup.py install --prefix=/usr/local || return
+    
+    result="Installation Libs fehlgeschlagen"
+    sudo apt-get install -y libasound2-dev libssl-dev libv4l-dev libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev \
+                            libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev libx264-dev libavformat-dev libavcodec-dev \
+                            libavdevice-dev libavfilter-dev libavresample-dev libavutil-dev libavcodec-extra libopus-dev \
+                            libopencore-amrwb-dev libopencore-amrnb-dev libvo-amrwbenc-dev || return
 
-    if [ -d $SipPath ]; then
-        mkdir -p $SipPath     
+    if [ -d $SipPath ]; then      
+       mkdir -p $SipPath   
     fi
     cd $SipPath
 
@@ -79,7 +87,7 @@ DoorPi3Install(){
     true || return 1
     
     cd $SipPath
-    https://github.com/pjsip/pjproject/archive/refs/tags/2.11.1.tar.gz &&
+    wget https://github.com/pjsip/pjproject/archive/refs/tags/2.11.1.tar.gz &&
     tar -xf 2.11.1.tar.gz &&
     cd $SipPath/pjproject-2.11.1 &&
 
@@ -87,13 +95,12 @@ DoorPi3Install(){
     echo "#define PJMEDIA_AUDIO_DEV_HAS_PORTAUDIO 0" >> pjlib/include/pj/config_site.h &&
     echo "#define PJMEDIA_HAS_VIDEO       1" >> pjlib/include/pj/config_site.h &&
 
-    echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
-    echo "export LDFLGS +=" >> ./user.mak &&
-    result="Vorbereitung  pjsip fehlgeschlagen" &&
-    true || return 1
+    #echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
+    #echo "export LDFLGS +=" >> ./user.mak &&
+    #result="Vorbereitung  pjsip fehlgeschlagen" &&
+    #true || return 1
 
-    
-    ./configure  --enable-shared --disable-libwebrtc &&
+    ./configure  &&
     make dep &&
     make &&
     sudo make install &&
