@@ -75,7 +75,7 @@ DoorPi3Install(){
 
     sudo apt-get install -y swig default-jdk || return
 
-    if [ -d $SipPath ]; then      
+    if [ ! -d $SipPath ]; then      
        mkdir -p $SipPath   
     fi
     cd $SipPath
@@ -109,6 +109,13 @@ DoorPi3Install(){
     result="Installation pjsip fehlgeschlagen" &&
     true || return 1
 
+    cd $SipPath/pjproject-2.11.1/pjsip-apps/src/swig/ &&
+    sed -i $SipPath/pjproject-2.11.1/pjsip-apps/src/swig/python/Makefile -e "s/USE_PYTHON3?=1/USE_PYTHON3=1/" &&
+    make &&
+    sudo make install &&
+    result="Installation pjsip python fehlgeschlagen" &&
+    true || return 1
+    
     result="Doorpi3 Installation fertiggestellt"
     return 0
 
