@@ -3,7 +3,9 @@
 #
 # Doorpi Installations Modul
 #
-# 13.9.21  v0.2.1 - Installation Doorpi
+#  0.3.x - Doorpi 3 install  
+#
+#  0.2.1 - Installation Doorpi
 #    
 ######################################
 
@@ -18,7 +20,7 @@ newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
 gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
 python2V=false
-version=v0.2.1
+VERSION=v0.2.1
 
 
 Debug=0
@@ -35,6 +37,13 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# Rasbian  auslesen
+. /etc/os-release || return 1
+
+# $ID = "rasbian"
+# $VERSION_ID = Version
+
+#grep -E --color=never "Revision" /proc/cpuinfo
 
 if [ ! -d $GitTarget ]; then
 
@@ -45,13 +54,28 @@ if [ ! -d $GitTarget ]; then
     exit 0
 fi
 
+
+asteriskinstall(){
+
+    sudo apt-get -y install asterisk
+    asteriskpath="/etc/asterisk/"
+
+    cp -r $locationOfScript"/conf/sip.conf" $asteriskpath
+    cp -r $locationOfScript"/conf/extensions.conf" $asteriskpath
+    
+    chown :asterisk -R $asteriskpath
+    chmod g+rw -R $asteriskpath
+
+
+}
+
 DoorPi3Install(){
 
     SipPath="/usr/local/src/sip"
  
     result="DoorPi3 Installation abgebrochen"
     if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
-        echo "wurde abgebrochen" 
+        echo "wurde abgebrochen" sudo apt-get install -y python3-pip
 		return 1
     fi
 
@@ -78,8 +102,8 @@ DoorPi3Install(){
     if [ ! -d $SipPath ]; then      
        mkdir -p $SipPath   
     fi
+  
     cd $SipPath
-
     wget https://github.com/cisco/openh264/archive/v2.2.0.tar.gz &&
     tar -xf v2.2.0.tar.gz &&
     cd $SipPath/openh264-2.2.0 &&
@@ -87,7 +111,14 @@ DoorPi3Install(){
     sudo make install &&
     result="Installation openh264 fehlgeschlagen" &&
     true || return 1
-    
+
+    # swap erweitern
+    result="swap Erweiterung fehlgeschlagen" &&      
+    sudo systemctl stop dphys-swapfile
+    sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1000/" &&
+    sudo systemctl stop dphys-swapfile &&
+    true || return 1
+
     cd $SipPath
     wget https://github.com/pjsip/pjproject/archive/refs/tags/2.11.1.tar.gz &&
     tar -xf 2.11.1.tar.gz &&
@@ -97,12 +128,13 @@ DoorPi3Install(){
     echo "#define PJMEDIA_AUDIO_DEV_HAS_PORTAUDIO 0" >> pjlib/include/pj/config_site.h &&
     echo "#define PJMEDIA_HAS_VIDEO       1" >> pjlib/include/pj/config_site.h &&
 
-    #echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
-    #echo "export LDFLGS +=" >> ./user.mak &&
-    #result="Vorbereitung  pjsip fehlgeschlagen" &&
-    #true || return 1
+    echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
+    echo "export LDFLGS +=" >> ./user.mak &&
+    result="Vorbereitung  pjsip fehlgeschlagen" &&
+    true || return 1
 
-    ./configure  &&
+    CFLAGS="-I/usr/local/src/sip/ffmpeg-5.0/" LDFLAGS="-L/tmp/test/" ./configure
+    ./configure  --with-ffmpeg=/usr/local/src/sip/ffmpeg-5.0/ &&
     make dep &&
     make &&
     sudo make install &&
@@ -116,6 +148,13 @@ DoorPi3Install(){
     result="Installation pjsip python fehlgeschlagen" &&
     true || return 1
     
+    # swap erweitern
+    result="swap Erweiterung fehlgeschlagen" &&      
+    sudo systemctl stop dphys-swapfile
+    sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=1000/CONF_SWAPSIZE=100/" &&
+    sudo systemctl stop dphys-swapfile &&
+    true || return 1
+
     result="Doorpi3 Installation fertiggestellt"
     return 0
 
@@ -312,7 +351,7 @@ DoorpiRestore (){
 while [ 1 ]
 do
     CHOICE=$(
-        whiptail --title "Willkomen im Doorpi Konfiguration Menu $version" --menu "\n " 20 100 12 \
+        whiptail --title "Willkomen im Doorpi Konfiguration Menu $VERSION" --menu "\n " 20 100 12 \
         "10" "| DoorPi Installation      Neuinstallation Doorpi"   \
 		"15" "| DoorPi3 Installation     Achtung !!! experimental"   \
         "20" "| Daemon Start             Start des Daemon"  \
@@ -336,7 +375,7 @@ do
 	        ;;
 
 			"15")
-                DoorPi3Install
+                source $locationOfScript/src/do3ins.sh $locationOfScript $VERSION
 	        ;;
 				
             "20")  
@@ -370,4 +409,6 @@ do
     whiptail --msgbox "$result" 16 78
 done
 
-exit
+exitar.bz2 &&
+    tar xvfj ffmpeg-5.0.tar.bz2 &&
+    cd $SipPath/ffmpeg-5.0/ &&
