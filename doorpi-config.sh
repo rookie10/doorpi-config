@@ -47,11 +47,11 @@ fi
 
 if [ ! -d $GitTarget ]; then
 
-    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade &&
-    sudo apt-get -y install git nano mc &&
-    sudo git clone $gitclonehttps &&
-    sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config &&
-    rm -r /tmp/doorpicon &&
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
+    sudo apt-get -y install git nano mc 
+    sudo git clone $gitclonehttps 
+    sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config 
+    rm -r /tmp/doorpicon 
 
     exit 0
 fi
