@@ -20,7 +20,7 @@ newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
 gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
 python2V=false
-VERSION=v0.2.1
+DOPIVERSION=v0.2.1
 
 
 Debug=0
@@ -47,10 +47,12 @@ fi
 
 if [ ! -d $GitTarget ]; then
 
-    sudo apt-get -y install git nano mc
-    sudo git clone $gitclonehttps
-    sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config
-    rm -r /tmp/doorpicon
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade &&
+    sudo apt-get -y install git nano mc &&
+    sudo git clone $gitclonehttps &&
+    sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config &&
+    rm -r /tmp/doorpicon &&
+
     exit 0
 fi
 
@@ -66,99 +68,8 @@ asteriskinstall(){
     chown :asterisk -R $asteriskpath
     chmod g+rw -R $asteriskpath
 
-
 }
 
-DoorPi3Install(){
-
-    SipPath="/usr/local/src/sip"
- 
-    result="DoorPi3 Installation abgebrochen"
-    if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
-        echo "wurde abgebrochen" sudo apt-get install -y python3-pip
-		return 1
-    fi
-
-
-    result="Install pip fehlgeschlagen" 
-    sudo apt-get install -y python3-pip || return
-    result="Git konnte nicht geladen werden"
-    cd /tmp
-    git clone https://github.com/emphasize/DoorPi || return
-    cd DoorPi
-    result="Branch nicht vorhanden"
-    git checkout bugfix/setuptools
-    result="Installation fehlgeschlagen" || return
-    sudo python3 setup.py install --prefix=/usr/local || return
-    
-    result="Installation Libs fehlgeschlagen"
-    sudo apt-get install -y libasound2-dev libssl-dev libv4l-dev libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev \
-                            libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev libx264-dev libavformat-dev libavcodec-dev \
-                            libavdevice-dev libavfilter-dev libavresample-dev libavutil-dev libavcodec-extra libopus-dev \
-                            libopencore-amrwb-dev libopencore-amrnb-dev libvo-amrwbenc-dev || return
-
-    sudo apt-get install -y swig default-jdk || return
-
-    if [ ! -d $SipPath ]; then      
-       mkdir -p $SipPath   
-    fi
-  
-    cd $SipPath
-    wget https://github.com/cisco/openh264/archive/v2.2.0.tar.gz &&
-    tar -xf v2.2.0.tar.gz &&
-    cd $SipPath/openh264-2.2.0 &&
-    make &&
-    sudo make install &&
-    result="Installation openh264 fehlgeschlagen" &&
-    true || return 1
-
-    # swap erweitern
-    result="swap Erweiterung fehlgeschlagen" &&      
-    sudo systemctl stop dphys-swapfile
-    sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1000/" &&
-    sudo systemctl stop dphys-swapfile &&
-    true || return 1
-
-    cd $SipPath
-    wget https://github.com/pjsip/pjproject/archive/refs/tags/2.11.1.tar.gz &&
-    tar -xf 2.11.1.tar.gz &&
-    cd $SipPath/pjproject-2.11.1 &&
-
-    echo "#define PJMEDIA_AUDIO_DEV_HAS_ALSA      1" > pjlib/include/pj/config_site.h &&
-    echo "#define PJMEDIA_AUDIO_DEV_HAS_PORTAUDIO 0" >> pjlib/include/pj/config_site.h &&
-    echo "#define PJMEDIA_HAS_VIDEO       1" >> pjlib/include/pj/config_site.h &&
-
-    echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
-    echo "export LDFLGS +=" >> ./user.mak &&
-    result="Vorbereitung  pjsip fehlgeschlagen" &&
-    true || return 1
-
-    CFLAGS="-I/usr/local/src/sip/ffmpeg-5.0/" LDFLAGS="-L/tmp/test/" ./configure
-    ./configure  --with-ffmpeg=/usr/local/src/sip/ffmpeg-5.0/ &&
-    make dep &&
-    make &&
-    sudo make install &&
-    result="Installation pjsip fehlgeschlagen" &&
-    true || return 1
-
-    cd $SipPath/pjproject-2.11.1/pjsip-apps/src/swig/ &&
-    sed -i $SipPath/pjproject-2.11.1/pjsip-apps/src/swig/python/Makefile -e "s/USE_PYTHON3?=1/USE_PYTHON3=1/" &&
-    make &&
-    sudo make install &&
-    result="Installation pjsip python fehlgeschlagen" &&
-    true || return 1
-    
-    # swap erweitern
-    result="swap Erweiterung fehlgeschlagen" &&      
-    sudo systemctl stop dphys-swapfile
-    sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=1000/CONF_SWAPSIZE=100/" &&
-    sudo systemctl stop dphys-swapfile &&
-    true || return 1
-
-    result="Doorpi3 Installation fertiggestellt"
-    return 0
-
-}
 
 DoorPiInstall(){
 
@@ -351,7 +262,7 @@ DoorpiRestore (){
 while [ 1 ]
 do
     CHOICE=$(
-        whiptail --title "Willkomen im Doorpi Konfiguration Menu $VERSION" --menu "\n " 20 100 12 \
+        whiptail --title "Willkomen im Doorpi Konfiguration Menu $DOPIVERSION" --menu "\n " 20 100 12 \
         "10" "| DoorPi Installation      Neuinstallation Doorpi"   \
 		"15" "| DoorPi3 Installation     Achtung !!! experimental"   \
         "20" "| Daemon Start             Start des Daemon"  \
@@ -376,7 +287,7 @@ do
 
 			"15")
                  
-				$locationOfScript/src/do3ins.sh $locationOfScript $VERSION
+				$locationOfScript/src/do3ins.sh $locationOfScript $DOPIVERSION
 	        ;;
 
 			"20")  

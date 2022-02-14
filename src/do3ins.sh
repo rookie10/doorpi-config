@@ -9,6 +9,7 @@
 ######################################
 
 GitTarget="/usr/local/src/doorpicon"
+SipPath="/usr/local/src/sip"
 MasterScriptPath=$1
 VERSION=$2
 HWRevision=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^1000//')
@@ -78,10 +79,10 @@ PJASUInstall(){
     true || return 1
 
     # swap erweitern sonst wird abgebrochen 
-    if [[ $HWRevision -gt $MinHWRevison ]] ; then
+    if [[ $HWRevision -lt $MinHWRevison ]] ; then
         result="swap Erweiterung fehlgeschlagen" &&      
         sudo systemctl stop dphys-swapfile &&
-        sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1000/" &&
+        sed -i /etc/dphys-swapfile -e "s/.*CONF_SWAPSIZE=.*/CONF_SWAPSIZE=100/g" &&
         sudo systemctl start dphys-swapfile &&
         true || return 1
     fi
@@ -119,7 +120,7 @@ PJASUInstall(){
     if [[ $HWRevision -lt $MinHWRevison ]] ; then
     	result="swap Erweiterung fehlgeschlagen" &&      
     	sudo systemctl stop dphys-swapfile &&
-    	sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=1000/CONF_SWAPSIZE=100/" &&
+    	sed -i /etc/dphys-swapfile -e "s/.*CONF_SWAPSIZE=.*/CONF_SWAPSIZE=100/g" &&
     	sudo systemctl start dphys-swapfile &&
     	true || return 1
     fi
