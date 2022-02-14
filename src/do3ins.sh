@@ -33,7 +33,6 @@ DoorPi3Install(){
 		return 1
     fi
 
-
     result="Install Systemdateien fehlgeschlagen" 
     sudo apt install -y python3-pip &&
     sudo pip install --upgrade pip &&
@@ -79,11 +78,11 @@ PJASUInstall(){
     true || return 1
 
     # swap erweitern sonst wird abgebrochen 
-    if [[ $HWRevision -lt $MinHWRevison ]]; then
+    if [[ $HWRevision -gt $MinHWRevison ]] ; then
         result="swap Erweiterung fehlgeschlagen" &&      
-        sudo systemctl stop dphys-swapfile
-        sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1000/" &&
         sudo systemctl stop dphys-swapfile &&
+        sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=100/CONF_SWAPSIZE=1000/" &&
+        sudo systemctl start dphys-swapfile &&
         true || return 1
     fi
 
@@ -117,11 +116,11 @@ PJASUInstall(){
     true || return 1
     
     # swap erweitern
-    if [[ $HWRevision -lt $MinHWRevison ]]; then
+    if [[ $HWRevision -lt $MinHWRevison ]] ; then
     	result="swap Erweiterung fehlgeschlagen" &&      
-    	sudo systemctl stop dphys-swapfile
-    	sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=1000/CONF_SWAPSIZE=100/" &&
     	sudo systemctl stop dphys-swapfile &&
+    	sed -i /etc/dphys-swapfile -e "s/CONF_SWAPSIZE=1000/CONF_SWAPSIZE=100/" &&
+    	sudo systemctl start dphys-swapfile &&
     	true || return 1
     fi
 
@@ -135,13 +134,7 @@ do
     CHOICE=$(
         whiptail --title "!!! Doorpi 3 Konfiguration Menu $VERSION" --menu "\n " 20 100 12 \
         "10" "| DoorPi 3 Installation      Neuinstallation Doorpi"   \
-		#"15" "| DoorPi3 Installation     Achtung !!! experimental"   \
-        #"20" "| Daemon Start             Start des Daemon"  \
-        #"25" "| Daemon Stop              Beenden des Daemon"  \
-        #"30" "| Backup                   Doorpi Konfig backup" \
-        #"40" "| Restore                  Wiederherstellung der Doorpi Konfig"  \
-		#"50" "| doorpi-config update     Git pull wird ausgeführt"  \
-        "20" "| PJSUA installation        SIP Client" 3>&2 2>&1 1>&3	
+        "20" "| PJSUA installation         SIP Client" 3>&2 2>&1 1>&3	
     )
 
 
@@ -168,5 +161,4 @@ do
                read -r result < result
 			;;
     esac
-    whiptail --msgbox "$result" 16 78
 done

@@ -375,11 +375,12 @@ do
 	        ;;
 
 			"15")
-                source $locationOfScript/src/do3ins.sh $locationOfScript $VERSION
+                 
+				$locationOfScript/src/do3ins.sh $locationOfScript $VERSION
 	        ;;
-				
-            "20")  
-                StartDaemon		
+
+			"20")  
+				StartDaemon		
 	        ;;
 				
             "25")  
@@ -406,9 +407,6 @@ do
                read -r result < result
             ;;
     esac
-    whiptail --msgbox "$result" 16 78
 done
 
-exitar.bz2 &&
-    tar xvfj ffmpeg-5.0.tar.bz2 &&
-    cd $SipPath/ffmpeg-5.0/ &&
+exit 0
