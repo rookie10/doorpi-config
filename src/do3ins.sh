@@ -25,20 +25,19 @@ locationOfScript=$(dirname "$(readlink -e "$0")")
 ScripName=${0##*/} 
 
 DoorPi3Install(){
-
-    SipPath="/usr/local/src/sip"
  
     result="DoorPi3 Installation abgebrochen"
     if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
-        echo "wurde abgebrochen" sudo apt-get install -y python3-pip
+        echo "wurde abgebrochen" 
 		return 1
     fi
 
     result="Install Systemdateien fehlgeschlagen" 
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade || return result="Raspberry OS update fehlgeschlagen"
+    
     sudo apt install -y python3-pip &&
     sudo apt install -y libxslt1-dev &&
     sudo pip install --upgrade pip &&
-    sudo pip install pyasn1-modules &&
     sudo pip install cryptography  &&
     true || return 1
     
