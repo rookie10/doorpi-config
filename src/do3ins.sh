@@ -36,7 +36,10 @@ DoorPi3Install(){
 
     result="Install Systemdateien fehlgeschlagen" 
     sudo apt install -y python3-pip &&
+    sudo apt install -y libxslt1-dev &&
     sudo pip install --upgrade pip &&
+    sudo pip install pyasn1-modules &&
+    sudo pip install cryptography  &&
     true || return 1
     
     result="Git konnte nicht geladen werden"
@@ -82,7 +85,7 @@ PJASUInstall(){
     if [[ $HWRevision -lt $MinHWRevison ]] ; then
         result="swap Erweiterung fehlgeschlagen" &&      
         sudo systemctl stop dphys-swapfile &&
-        sed -i /etc/dphys-swapfile -e "s/.*CONF_SWAPSIZE=.*/CONF_SWAPSIZE=100/g" &&
+        sed -i /etc/dphys-swapfile -e "s/.*CONF_SWAPSIZE=.*/CONF_SWAPSIZE=1000/g" &&
         sudo systemctl start dphys-swapfile &&
         true || return 1
     fi
@@ -96,13 +99,12 @@ PJASUInstall(){
     echo "#define PJMEDIA_AUDIO_DEV_HAS_PORTAUDIO 0" >> pjlib/include/pj/config_site.h &&
     echo "#define PJMEDIA_HAS_VIDEO       1" >> pjlib/include/pj/config_site.h &&
 
-    echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
-    echo "export LDFLGS +=" >> ./user.mak &&
-    result="Vorbereitung  pjsip fehlgeschlagen" &&
-    true || return 1
+    #echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
+    #echo "export LDFLGS +=" >> ./user.mak &&
+    #result="Vorbereitung  pjsip fehlgeschlagen" &&
+    #true || return 1
 
-    CFLAGS="-I/usr/local/src/sip/ffmpeg-5.0/" LDFLAGS="-L/tmp/test/" ./configure
-    ./configure  --with-ffmpeg=/usr/local/src/sip/ffmpeg-5.0/ &&
+    ./configure   &&
     make dep &&
     make &&
     sudo make install &&
