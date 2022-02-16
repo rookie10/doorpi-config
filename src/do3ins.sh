@@ -25,20 +25,20 @@ locationOfScript=$(dirname "$(readlink -e "$0")")
 ScripName=${0##*/} 
 
 DoorPi3Install(){
+
+    SipPath="/usr/local/src/sip"
  
     result="DoorPi3 Installation abgebrochen"
     if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
-        echo "wurde abgebrochen" 
-		return 1
+        echo "wurde abgebrochen"
     fi
 
     result="Install Systemdateien fehlgeschlagen" 
-    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade || return result="Raspberry OS update fehlgeschlagen"
-    
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
     sudo apt install -y python3-pip &&
-    sudo apt install -y libxslt1-dev &&
     sudo pip install --upgrade pip &&
     sudo pip install cryptography  &&
+    sudo apt install -y libxslt1-dev &&
     true || return 1
     
     result="Git konnte nicht geladen werden"
@@ -58,6 +58,8 @@ DoorPi3Install(){
 }
 
 PJASUInstall(){
+
+    sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
     
     result="Installation Libs fehlgeschlagen"
     sudo apt-get install -y libasound2-dev libssl-dev libv4l-dev libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev \
