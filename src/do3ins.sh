@@ -26,8 +26,6 @@ ScripName=${0##*/}
 
 DoorPi3Install(){
 
-    SipPath="/usr/local/src/sip"
- 
     result="DoorPi3 Installation abgebrochen"
     if !( whiptail --yesno " A C H T U N G ! ! \n \n die Auswahl von Doorpi3 ist aktuell absolut experimental !!! \n \n Wollen Sie trotzdem starten ?" 16 78 );then
         echo "wurde abgebrochen"
@@ -38,6 +36,7 @@ DoorPi3Install(){
     sudo apt install -y python3-pip &&
     sudo pip install --upgrade pip &&
     sudo pip install cryptography  &&
+    sudo pip install requests==2.27.1
     sudo apt install -y libxslt1-dev &&
     true || return 1
     
@@ -100,7 +99,7 @@ PJASUInstall(){
     echo "#define PJMEDIA_AUDIO_DEV_HAS_PORTAUDIO 0" >> pjlib/include/pj/config_site.h &&
     echo "#define PJMEDIA_HAS_VIDEO       1" >> pjlib/include/pj/config_site.h &&
 
-    #echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -ffast-math" > ./user.mak &&
+    #echo "export CFLAGS += -march=armv8-a -mtune=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard -mlittle-endian -munaligned-access -fPIC -ffast-math" > ./user.mak &&
     #echo "export LDFLGS +=" >> ./user.mak &&
     #result="Vorbereitung  pjsip fehlgeschlagen" &&
     #true || return 1
