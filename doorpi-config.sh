@@ -18,7 +18,7 @@ TempConfig="/tmp/doorpicon"
 DoorpiSetup="/usr/local/lib/python2.7/dist-packages/DoorPi*"
 newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
-gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
+gitclonehttps="https://github.com/rookie10/doorpi-config.git"
 python2V=false
 INSTALLVERS=v0.2.2
 
@@ -49,7 +49,9 @@ if [ ! -d $GitTarget ]; then
 
 	sudo apt-get -y install git nano mc 
     sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
-    sudo git clone $gitclonehttps 
+    sudo git clone $gitclonehttps $GitTarget
+    cd $GitTarget
+    git config pull.rebase false
     sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config 
     rm -r /tmp/doorpicon 
 

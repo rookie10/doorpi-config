@@ -108,10 +108,6 @@ END
 }
 
 
-}
-
-
-
 while [ 1 ]
 do
     CHOICE=$(
