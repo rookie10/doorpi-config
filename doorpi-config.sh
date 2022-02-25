@@ -20,14 +20,14 @@ newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
 gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
 python2V=false
-DOPIVERSION=v0.2.1
+INSTALLVERS=v0.2.1
 
 
 Debug=0
  
 #[ Debug == 1 ] || set -x
 
-locationOfScript=$(dirname "$(readlink -e "$0")")
+BasePath=$(dirname "$(readlink -e "$0")")
 ScripName=${0##*/} 
 
 
@@ -47,8 +47,8 @@ fi
 
 if [ ! -d $GitTarget ]; then
 
+	sudo apt-get -y install git nano mc 
     sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade
-    sudo apt-get -y install git nano mc 
     sudo git clone $gitclonehttps 
     sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config 
     rm -r /tmp/doorpicon 
@@ -62,8 +62,8 @@ asteriskinstall(){
     sudo apt-get -y install asterisk
     asteriskpath="/etc/asterisk/"
 
-    cp -r $locationOfScript"/conf/sip.conf" $asteriskpath
-    cp -r $locationOfScript"/conf/extensions.conf" $asteriskpath
+    cp -r $BasePath"/conf/sip.conf" $asteriskpath
+    cp -r $BasePath"/conf/extensions.conf" $asteriskpath
     
     chown :asterisk -R $asteriskpath
     chmod g+rw -R $asteriskpath
@@ -186,7 +186,7 @@ InstallSamba (){
  
     #Samba 
     sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install -y samba samba-common smbclient
-    cp -r $locationOfScript"/conf/smb.conf" /etc/samba/
+    cp -r $BasePath"/conf/smb.conf" /etc/samba/
 
     sudo service smbd restart
     sudo service nmbd restart
@@ -262,9 +262,9 @@ DoorpiRestore (){
 while [ 1 ]
 do
     CHOICE=$(
-        whiptail --title "Willkomen im Doorpi Konfiguration Menu $DOPIVERSION" --menu "\n " 20 100 12 \
-        "10" "| DoorPi Installation      Neuinstallation Doorpi"   \
-		"15" "| DoorPi3 Installation     Achtung !!! experimental"   \
+        whiptail --title "Willkomen im Doorpi Konfiguration Menu $INSTALLVERS" --menu "\n " 20 100 12 \
+        "10" "| DoorPi                   Installation last stable Version"   \
+		"15" "| DoorPi unstable          Achtung !!! experimental"   \
         "20" "| Daemon Start             Start des Daemon"  \
         "25" "| Daemon Stop              Beenden des Daemon"  \
         "30" "| Backup                   Doorpi Konfig backup" \
@@ -287,7 +287,7 @@ do
 
 			"15")
                  
-				$locationOfScript/src/do3ins.sh $locationOfScript $DOPIVERSION
+				$BasePath/src/do2dev.sh $BasePath $INSTALLVERS
 	        ;;
 
 			"20")  
