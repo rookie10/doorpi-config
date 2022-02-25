@@ -72,9 +72,9 @@ InstVer () {
 
     wget https://github.com/motom001/DoorPi/archive/refs/tags/$InstallVersion.tar.gz || return 1
 
-    tar -vxf $InstallVersion.tar.gz -C /tmp  || return 1
+    tar -xf $InstallVersion.tar.gz -C /tmp  || return 1
 
-    if [ TempInstall ] ; then
+    if [ TempInstall == true ] ; then
         if [ -d $TempGitPath ]; then
             rm -r $TempGitPath || return 1
         fi   
