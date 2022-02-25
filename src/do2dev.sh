@@ -65,6 +65,7 @@ CollRelasVers() {
 InstVer () {
 
     InstallVersion=$1
+    TempInstall=$2
     cd /tmp
     if [ -f $InstallVersion.tar.gz ]; then
         rm -r /tmp/$InstallVersion.tar.gz || return 1
@@ -87,9 +88,9 @@ InstVer () {
         cp -r /tmp/DoorPi-${InstallVersion##*v}  $LocalGitPath || return 1
         CurrentPath=$LocalGitPath
     fi
-    
-    cd $CurrentPath
+      
     sudo apt install -y python3-pip || return 1
+    cd $CurrentPath
     sudo pip install -r requirements.txt || return 1
 
 textfeld=$(cat <<-END
@@ -129,7 +130,7 @@ do
                 TempInstall=1 
                 CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
                 if [ $TAGCHOICE ] ; then
-                    InstVer $TAGCHOICE || ErrorOut "Installation fehlgeschlagen"
+                    InstVer $TAGCHOICE $TempInstall || ErrorOut "Installation fehlgeschlagen"
                 fi
 			;;
 
@@ -138,7 +139,7 @@ do
                 TempInstall=0
                 CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
                 if [ $TAGCHOICE ] ; then
-                    InstVer $TAGCHOICE || ErrorOut "Installation fehlgeschlagen"
+                    InstVer $TAGCHOICE $TempInstall || ErrorOut "Installation fehlgeschlagen"
                 fi		
 			;;        
  
