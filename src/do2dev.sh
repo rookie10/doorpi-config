@@ -75,7 +75,7 @@ InstVer () {
 
     tar -xf $InstallVersion.tar.gz -C /tmp  || return 1
 
-    if [ $TempInstall=="yes" ] ; then
+    if [ $TempInstall=="no" ]; then
         if [ -d $TempGitPath ]; then
             rm -r $TempGitPath || return 1
         fi   
@@ -129,7 +129,7 @@ do
 
                 TempInstall="yes" 
                 CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
-                if [ $TAGCHOICE ] ; then
+                if [ $TAGCHOICE ]; then
                     InstVer $TAGCHOICE $TempInstall || ErrorOut "Installation fehlgeschlagen"
                 fi
 			;;
@@ -138,7 +138,7 @@ do
                 
                 TempInstall="no"
                 CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
-                if [ $TAGCHOICE ] ; then
+                if [ $TAGCHOICE ]; then
                     InstVer $TAGCHOICE $TempInstall || ErrorOut "Installation fehlgeschlagen"
                 fi		
 			;;        
