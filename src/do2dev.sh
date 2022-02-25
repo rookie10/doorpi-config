@@ -79,14 +79,34 @@ InstVer () {
             rm -r $TempGitPath || return 1
         fi   
         cp -r /tmp/DoorPi-${InstallVersion##*v}  $TempGitPath || return 1
+        CurrentPath=$TempGitPath
     else 
         if [ -d $LocalGitPath ]; then
             rm -r $LocalGitPath || return 1
         fi
         cp -r /tmp/DoorPi-${InstallVersion##*v}  $LocalGitPath || return 1
+        CurrentPath=$LocalGitPath
     fi
     
+    cd $CurrentPath
     sudo apt install -y python3-pip || return 1
+    sudo pip install -r requirements.txt || return 1
+
+textfeld=$(cat <<-END
+    Doopi wurde erfolgreich installiert. DoorPi kann jetzt über die Konsole
+    gestartet werden. 
+    
+    Zum starten bitte folgendes eingeben
+
+    python $CurrentPath/main.py --trace -c [Pfad zur Config]
+    
+    eingeben
+END
+)
+
+    whiptail --title "DoorPi Installation abgeschlossen " --msgbox "$textfeld"  15 100
+}
+
 
 }
 
