@@ -18,7 +18,7 @@ HWRevision=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^10
 MinHWRevison="0xb03111" #Raspi4 2GB
 MinHWRevison=$(printf "%d" "$MinHWRevison")
 HWRevision=$(printf "%d" "0x$HWRevision")
-TempInstall= false
+TempInstall=false
 
 Debug=0
  
@@ -126,7 +126,7 @@ do
 	    
             "10")
 
-                TempInstall= false 
+                TempInstall=false 
                 CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
                 if [ $TAGCHOICE ] ; then
                     InstVer $TAGCHOICE || ErrorOut "Installation fehlgeschlagen"
@@ -135,7 +135,7 @@ do
 
             "20")  
                 
-                TempInstall= true
+                TempInstall=true
                 CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
                 if [ $TAGCHOICE ] ; then
                     InstVer $TAGCHOICE || ErrorOut "Installation fehlgeschlagen"

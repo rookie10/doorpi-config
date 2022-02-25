@@ -259,15 +259,13 @@ DoorpiRestore (){
     fi
 }
 
-
-
 while [ 1 ]
 do
     CHOICE=$(
         whiptail --title "Willkomen im Doorpi Konfiguration Menu $INSTALLVERS" --menu "\n " 20 100 12 \
         "10" "| DoorPi                      Installation last stable Version"   \
         "  " "   "  \
-		"15" "| !! DoorPi unstable          Achtung !!! Unstable Doorpi Version"   \
+		"15" "| DoorPi unstable !!          Unstable Doorpi Version"   \
         "20" "| Daemon Start                Start des DoorPi Daemon"  \
         "25" "| Daemon Stop                 Beenden des DoorPi Daemon"  \
         "30" "| Backup                      Doorpi Konfig backup" \
