@@ -3,9 +3,9 @@
 #
 # Doorpi Installations Modul
 #
-#  0.3.x - Doorpi 3 install  
+#  0.2.2 - DoorPi Entwicklungsversionen Menu  
 #
-#  0.2.1 - Installation Doorpi
+#  0.2.1 - Installation DoorPi
 #    
 ######################################
 
@@ -20,7 +20,7 @@ newpassword="doorpi"
 doorpiconf="/usr/local/etc/DoorPi"
 gitclonehttps="https://github.com/rookie10/doorpi-config.git /usr/local/src/doorpicon"
 python2V=false
-INSTALLVERS=v0.2.1
+INSTALLVERS=v0.2.2
 
 
 Debug=0
@@ -264,12 +264,13 @@ do
     CHOICE=$(
         whiptail --title "Willkomen im Doorpi Konfiguration Menu $INSTALLVERS" --menu "\n " 20 100 12 \
         "10" "| DoorPi                   Installation last stable Version"   \
-		"15" "| DoorPi unstable          Achtung !!! experimental"   \
-        "20" "| Daemon Start             Start des Daemon"  \
-        "25" "| Daemon Stop              Beenden des Daemon"  \
+        "  " "   "  \
+		"15" "| DoorPi unstable          Achtung !!! Unstable Doorpi Version"   \
+        "20" "| Daemon Start             Start des DoorPi Daemon"  \
+        "25" "| Daemon Stop              Beenden des DoorPi Daemon"  \
         "30" "| Backup                   Doorpi Konfig backup" \
         "40" "| Restore                  Wiederherstellung der Doorpi Konfig"  \
-		"50" "| doorpi-config update     Git pull wird ausgeführt"  \
+		"50" "| Upgrade                  Upgrate doorpi-config"  \
         "60" "| Samba                    Installation Samba" 3>&2 2>&1 1>&3	
     )
 

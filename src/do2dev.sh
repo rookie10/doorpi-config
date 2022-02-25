@@ -10,6 +10,7 @@
 result=""
 gitPath="https://github.com/motom001/DoorPi.git"
 LocalGitPath="/usr/local/src/doorpi"
+TempGitPath="/tmp/DoorPi"
 
 MasterScriptPath=$1
 VERSION=$2
@@ -17,10 +18,17 @@ HWRevision=$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed 's/^10
 MinHWRevison="0xb03111" #Raspi4 2GB
 MinHWRevison=$(printf "%d" "$MinHWRevison")
 HWRevision=$(printf "%d" "0x$HWRevision")
+TempInstall= false
 
 Debug=0
  
 [ Debug == 1 ] || set -x
+
+
+function ErrorOut() {
+whiptail --title "DoorPi Installation abgebrochen " --msgbox $1  8 78
+}
+
 
 # sort release Versions
 CollRelasVers() {
@@ -48,27 +56,37 @@ CollRelasVers() {
     # Dateien in Array schreiben 
     IFS=',' read -r -a array <<< "$test"
 
-    branchCHOICE=$(
+    TAGCHOICE=$(
        whiptail --title "! ! ! DoorPi Entwicklungsversion ! ! !  " --radiolist  "\n Bitte Auswählen welche DoorPi Version verwenden werden soll" 16 78 5 \
                          "${array[@]}" 3>&2 2>&1 1>&3
     ) 
-    
-    if [ $branchCHOICE != "" ] ; then    
-       return $branchCHOICE
-    else
-       return 0
-    fi
-
 } 
 
-InstFixVer () {
+InstVer () {
 
     InstallVersion=$1
-
     cd /tmp
-    wget https://github.com/motom001/DoorPi/archive/refs/tags/$InstallVersion.tar.gz
-    tar -xf v$InstallVersion.tar.gz $LocalGitPath
-    sudo apt install -y python3-pip
+    if [ -f $InstallVersion.tar.gz ]; then
+        rm -r /tmp/$InstallVersion.tar.gz || return 1
+    fi
+
+    wget https://github.com/motom001/DoorPi/archive/refs/tags/$InstallVersion.tar.gz || return 1
+
+    tar -vxf $InstallVersion.tar.gz -C /tmp  || return 1
+
+    if [ TempInstall ] ; then
+        if [ -d $TempGitPath ]; then
+            rm -r $TempGitPath || return 1
+        fi   
+        cp -r /tmp/DoorPi-${InstallVersion##*v}  $TempGitPath || return 1
+    else 
+        if [ -d $LocalGitPath ]; then
+            rm -r $LocalGitPath || return 1
+        fi
+        cp -r /tmp/DoorPi-${InstallVersion##*v}  $LocalGitPath || return 1
+    fi
+    
+    sudo apt install -y python3-pip || return 1
 
 }
 
@@ -91,14 +109,21 @@ do
 			;;
 	    
             "10")
-                Version=$(CollRelasVers)
-                if [ $Version ] ;
-                    InstFixVer $Version
+
+                TempInstall= false 
+                CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
+                if [ $TAGCHOICE ] ; then
+                    InstVer $TAGCHOICE || ErrorOut "Installation fehlgeschlagen"
                 fi
 			;;
 
             "20")  
-                exit		
+                
+                TempInstall= true
+                CollRelasVers || ErrorOut "Auswahl der Installationsdatei fehlgeschlagen"	
+                if [ $TAGCHOICE ] ; then
+                    InstVer $TAGCHOICE || ErrorOut "Installation fehlgeschlagen"
+                fi		
 			;;        
  
             "60")
