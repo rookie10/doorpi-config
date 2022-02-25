@@ -75,7 +75,7 @@ InstVer () {
 
     tar -xf $InstallVersion.tar.gz -C /tmp  || return 1
 
-    if [ $TempInstall=="no" ]; then
+    if [ $TempInstall == "no" ]; then
         if [ -d $TempGitPath ]; then
             rm -r $TempGitPath || return 1
         fi   
