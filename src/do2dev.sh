@@ -9,7 +9,7 @@
 
 result=""
 gitPath="https://github.com/motom001/DoorPi.git"
-LocalGitPath="/usr/local/src/doorpi"
+LocalGitPath="/usr/local/src/DoorPi"
 TempGitPath="/tmp/DoorPi"
 
 MasterScriptPath=$1
@@ -26,7 +26,7 @@ Debug=0
 
 
 function ErrorOut() {
-whiptail --title "DoorPi Installation abgebrochen " --msgbox $1  8 78
+whiptail --title "DoorPi Installation abgebrochen " --msgbox "$1"  8 78
 }
 
 
@@ -94,14 +94,13 @@ InstVer () {
     sudo pip install -r requirements.txt || return 1
 
 textfeld=$(cat <<-END
-    Doopi wurde erfolgreich installiert. DoorPi kann jetzt über die Konsole
+    DoorPi wurde erfolgreich installiert. Die Installation kann jetzt über die Konsole
     gestartet werden. 
     
     Zum starten bitte folgendes eingeben
 
     python $CurrentPath/main.py --trace -c [Pfad zur Config]
     
-    eingeben
 END
 )
 
@@ -113,8 +112,8 @@ while [ 1 ]
 do
     CHOICE=$(
         whiptail --title "!!! Doorpi unstable Versions !!!!  $VERSION" --menu "\n " 20 100 12 \
-        "10" "| Install                   Last unstable Versions "   \
-        "20" "| Quick install             RAM Installation " 3>&2 2>&1 1>&3	
+        "10" "| Install                  Last unstable Versions "   \
+        "20" "| Fast install             RAM Installation " 3>&2 2>&1 1>&3	
     )
 
 
