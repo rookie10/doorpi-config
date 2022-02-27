@@ -53,8 +53,6 @@ if [ ! -d $GitTarget ]; then
     cd $GitTarget
     git config pull.rebase false
     sudo ln -s  $GitTarget/doorpi-config.sh /usr/local/bin/doorpi-config 
-    rm -r /tmp/doorpicon 
-
     exit 0
 fi
 
