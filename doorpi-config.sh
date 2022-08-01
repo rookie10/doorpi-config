@@ -144,7 +144,8 @@ DoorPiInstall(){
     result="DoorPiWeb clone fehlgeschlagen" 
     sudo git clone https://github.com/motom001/DoorPiWeb.git /usr/local/etc/DoorPiWeb || return 
 
-    sudo python -m pip install requests==2.27.1
+    result="Installation von request fehlgeschlagen" 
+    sudo python -m pip install requests==2.27.1 || return
     
     sudo systemctl enable doorpi.service &&
     sudo systemctl start doorpi.service &&
