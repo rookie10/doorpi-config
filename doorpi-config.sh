@@ -124,6 +124,9 @@ DoorPiInstall(){
 	
     true || return 
 
+    result="Installation von request fehlgeschlagen" 
+    sudo python -m pip install requests==2.27.1 || return
+
     sed -i $TempDoorpi/setup.py -e "s/from pip.req import parse_requirements/def parse_requirements(filename):/" &&
     sed -i $TempDoorpi/setup.py -e "s/install_reqs = parse_requirements(os.path.join(base_path, 'requirements.txt'), session=uuid.uuid1())/    \"\"\" load requirements from a pip requirements file \"\"\"/" &&
     sed -i $TempDoorpi/setup.py -e "s/reqs = \[str(req.req) for req in install_reqs\]/    lineiter = (line.strip() for line in open(filename))/" &&
@@ -143,9 +146,6 @@ DoorPiInstall(){
 
     result="DoorPiWeb clone fehlgeschlagen" 
     sudo git clone https://github.com/motom001/DoorPiWeb.git /usr/local/etc/DoorPiWeb || return 
-
-    result="Installation von request fehlgeschlagen" 
-    sudo python -m pip install requests==2.27.1 || return
     
     sudo systemctl enable doorpi.service &&
     sudo systemctl start doorpi.service &&
